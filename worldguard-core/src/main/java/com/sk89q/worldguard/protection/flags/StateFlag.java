@@ -88,7 +88,7 @@ public class StateFlag extends Flag<StateFlag.State> {
         } else if (input.equalsIgnoreCase("none")) {
             return null;
         } else {
-            throw new InvalidFlagFormat("Expected none/allow/deny but got '" + input + "'");
+            throw new InvalidFlagFormat("none/allow/deny のいずれかを指定してください（入力値: '" + input + "'）");
         }
     }
 

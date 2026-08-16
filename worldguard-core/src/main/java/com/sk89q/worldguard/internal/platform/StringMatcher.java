@@ -73,7 +73,7 @@ public interface StringMatcher {
     default Iterable<? extends LocalPlayer> checkPlayerMatch(List<? extends LocalPlayer> players) throws CommandException {
         // Check to see if there were any matches
         if (players.isEmpty()) {
-            throw new CommandException("No players matched query.");
+            throw new CommandException("条件に一致するプレイヤーが見つかりません。");
         }
 
         return players;
@@ -115,8 +115,8 @@ public interface StringMatcher {
         // players were found (we don't want to just pick off the first one,
         // as that may be the wrong player)
         if (players.hasNext()) {
-            throw new CommandException("More than one player found! " +
-                    "Use @<name> for exact matching.");
+            throw new CommandException("プレイヤーが複数見つかりました! " +
+                    "完全一致で指定するには @<name> を使用してください。");
         }
 
         return match;

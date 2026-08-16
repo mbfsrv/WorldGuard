@@ -83,7 +83,7 @@ public class MapFlag<K, V> extends Flag<Map<K, V>> {
             final char split = str.indexOf('=') == -1 ? ':' : '=';
             final String[] keyVal = str.split(String.valueOf(split));
             if (keyVal.length != 2) {
-                throw new InvalidFlagFormat("Input must be in a 'key:value,key1=value1' format. Either ':' or '=' can be used.");
+                throw new InvalidFlagFormat("入力は 'key:value,key1=value1' の形式である必要があります。区切りには ':' か '=' のどちらかを使用できます。");
             }
 
             final FlagContext key = context.copyWith(null, keyVal[0], null);

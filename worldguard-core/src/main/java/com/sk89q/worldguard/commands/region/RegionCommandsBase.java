@@ -97,7 +97,7 @@ class RegionCommandsBase {
                     World override = WorldEdit.getInstance().getSessionManager().get(sender).getWorldOverride();
                     if (override != null) {
                         if (sender instanceof LocalPlayer && !override.equals(((LocalPlayer) sender).getWorld())) {
-                            sender.printDebug(TextComponent.of("Using //world override for region command: " + override.getName()));
+                            sender.printDebug(TextComponent.of("リージョンコマンドに //world のオーバーライドを使用します: " + override.getName()));
                         }
                         return override;
                     }
@@ -107,7 +107,7 @@ class RegionCommandsBase {
             if (sender instanceof LocalPlayer) {
                 return ((LocalPlayer) sender).getWorld();
             } else {
-                throw new CommandException("Please specify " + "the world with -" + flag + " world_name.");
+                throw new CommandException("-" + flag + " world_name の形式でワールドを指定してください。");
             }
         }
     }
@@ -123,12 +123,12 @@ class RegionCommandsBase {
     protected static String checkRegionId(String id, boolean allowGlobal) throws CommandException {
         if (!ProtectedRegion.isValidId(id)) {
             throw new CommandException(
-                    "The region name of '" + id + "' contains characters that are not allowed.");
+                    "リージョン名 '" + id + "' に使用できない文字が含まれています。");
         }
 
         if (!allowGlobal && id.equalsIgnoreCase("__global__")) { // Sorry, no global
             throw new CommandException(
-                    "Sorry, you can't use __global__ here.");
+                    "申し訳ありませんが、ここでは __global__ を使用できません。");
         }
 
         return id;
@@ -161,7 +161,7 @@ class RegionCommandsBase {
             }
 
             throw new CommandException(
-                    "No region could be found with the name of '" + id + "'.");
+                    "名前 '" + id + "' のリージョンが見つかりません。");
         }
 
         return region;
@@ -208,13 +208,13 @@ class RegionCommandsBase {
         if (set.size() == 0) {
             if (allowGlobal) {
                 ProtectedRegion global = checkExistingRegion(regionManager, "__global__", true);
-                player.printDebug("You're not standing in any " +
-                        "regions. Using the global region for this world instead.");
+                player.printDebug("どのリージョンの中にもいません。" +
+                        "代わりにこのワールドのグローバルリージョンを使用します。");
                 return global;
             }
             throw new CommandException(
-                    "You're not standing in a region. " +
-                            "Specify an ID if you want to select a specific region.");
+                    "リージョンの中にいません。" +
+                            "特定のリージョンを選択したい場合はIDを指定してください。");
         } else if (set.size() > 1) {
             boolean first = true;
             Set<ProtectedRegion> filteredRegions = set.getRegions().stream().filter(permissionPredicate).collect(Collectors.toSet());
@@ -222,7 +222,7 @@ class RegionCommandsBase {
 
             final TextComponent.Builder builder = TextComponent.builder("");
             if (!filteredRegions.isEmpty()) {
-                builder.append(TextComponent.of("Current regions: ", TextColor.GOLD));
+                builder.append(TextComponent.of("現在のリージョン: ", TextColor.GOLD));
                 for (ProtectedRegion region : filteredRegions) {
                     if (!first) {
                         builder.append(TextComponent.of(", "));
@@ -230,20 +230,20 @@ class RegionCommandsBase {
                     first = false;
                     TextComponent regionComp = TextComponent.of(region.getId(), TextColor.AQUA);
                     if (rgCmd != null && rgCmd.contains("%id%")) {
-                        regionComp = regionComp.hoverEvent(HoverEvent.of(HoverEvent.Action.SHOW_TEXT, TextComponent.of("Click to pick this region")))
+                        regionComp = regionComp.hoverEvent(HoverEvent.of(HoverEvent.Action.SHOW_TEXT, TextComponent.of("クリックしてこのリージョンを選択")))
                                 .clickEvent(ClickEvent.of(ClickEvent.Action.RUN_COMMAND, rgCmd.replace("%id%", region.getId())));
                     }
                     builder.append(regionComp);
                 }
                 if (hiddenRegions > 0) {
-                    builder.append(TextComponent.of(", and " + hiddenRegions + " hidden regions", TextColor.GRAY));
+                    builder.append(TextComponent.of("、他" + hiddenRegions + "件の非表示リージョン", TextColor.GRAY));
                 }
             } else {
-                builder.append(TextComponent.of("Current regions: ", TextColor.GOLD));
-                builder.append(TextComponent.of(hiddenRegions + " hidden regions", TextColor.GRAY));
+                builder.append(TextComponent.of("現在のリージョン: ", TextColor.GOLD));
+                builder.append(TextComponent.of(hiddenRegions + "件の非表示リージョン", TextColor.GRAY));
             }
             player.print(builder.build());
-            throw new CommandException("You're standing in several regions (please pick one).");
+            throw new CommandException("複数のリージョンの中にいます（1つを選択してください）。");
         }
 
         return set.iterator().next();
@@ -265,9 +265,9 @@ class RegionCommandsBase {
             }
             return localSession.getRegionSelector(localSession.getSelectionWorld()).getRegion();
         } catch (IncompleteRegionException e) {
-            throw new CommandException("Please select an area first. " +
-                    "Use WorldEdit to make a selection! " +
-                    "(see: https://worldedit.enginehub.org/en/latest/usage/regions/selections/).");
+            throw new CommandException("先にエリアを選択してください。" +
+                    "WorldEditを使用して選択してください！ " +
+                    "(参照: https://worldedit.enginehub.org/en/latest/usage/regions/selections/)");
         }
     }
 
@@ -280,8 +280,8 @@ class RegionCommandsBase {
      */
     protected static void checkRegionDoesNotExist(RegionManager manager, String id, boolean mayRedefine) throws CommandException {
         if (manager.hasRegion(id)) {
-            throw new CommandException("A region with that name already exists. Please choose another name." +
-                    (mayRedefine ? " To change the shape, use /region redefine " + id + "." : ""));
+            throw new CommandException("その名前のリージョンは既に存在します。別の名前を選択してください。" +
+                    (mayRedefine ? " 形状を変更するには /region redefine " + id + " を使用してください。" : ""));
         }
     }
 
@@ -293,15 +293,15 @@ class RegionCommandsBase {
      */
     protected static RegionManager checkRegionManager(World world) throws CommandException {
         if (!WorldGuard.getInstance().getPlatform().getGlobalStateManager().get(world).useRegions) {
-            throw new CommandException("Region support is disabled in the target world. " +
-                    "It can be enabled per-world in WorldGuard's configuration files. " +
-                    "However, you may need to restart your server afterwards.");
+            throw new CommandException("対象のワールドではリージョン機能が無効になっています。" +
+                    "WorldGuardの設定ファイルでワールドごとに有効にできます。" +
+                    "ただし、その後サーバーの再起動が必要になる場合があります。");
         }
 
         RegionManager manager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         if (manager == null) {
-            throw new CommandException("Region data failed to load for this world. " +
-                    "Please ask a server administrator to read the logs to identify the reason.");
+            throw new CommandException("このワールドのリージョンデータの読み込みに失敗しました。" +
+                    "サーバー管理者にログを確認してもらい、原因を特定してください。");
         }
         return manager;
     }
@@ -328,7 +328,7 @@ class RegionCommandsBase {
             BlockVector3 max = selection.getMaximumPoint();
             return new ProtectedCuboidRegion(id, min, max);
         } else {
-            throw new CommandException("Sorry, you can only use cuboids and polygons for WorldGuard regions.");
+            throw new CommandException("申し訳ありませんが、WorldGuardのリージョンには立方体と多角形のみ使用できます。");
         }
     }
 
@@ -345,8 +345,8 @@ class RegionCommandsBase {
             String failingList = Joiner.on(", ").join(failures.stream()
                     .map(regionManager -> "'" + regionManager.getName() + "'").collect(Collectors.toList()));
 
-            sender.print(TextComponent.of("(Warning: The background saving of region data is failing for these worlds: " + failingList + ". " +
-                    "Your changes are getting lost. See the server log for more information.)", TextColor.GOLD));
+            sender.print(TextComponent.of("(警告: 次のワールドでリージョンデータのバックグラウンド保存が失敗しています: " + failingList + "。" +
+                    "変更内容が失われています。詳細はサーバーログを確認してください。)", TextColor.GOLD));
         }
     }
 
@@ -362,7 +362,7 @@ class RegionCommandsBase {
         }
         int height = region.getMaximumPoint().y() - region.getMinimumPoint().y();
         if (height <= 2) {
-            sender.printDebug("(Warning: The height of the region was " + (height + 1) + " block(s).)");
+            sender.printDebug("(警告: リージョンの高さが " + (height + 1) + " ブロックでした。)");
         }
     }
 
@@ -375,7 +375,7 @@ class RegionCommandsBase {
      */
     protected static void informNewUser(Actor sender, RegionManager manager, ProtectedRegion region) {
         if (manager.size() <= 2) {
-            sender.print(SubtleFormat.wrap("(This region is NOW PROTECTED from modification from others. Don't want that? Use ")
+            sender.print(SubtleFormat.wrap("(このリージョンは他者による変更からたった今保護されました。それを望まない場合は次を使用してください: ")
                             .append(TextComponent.of("/rg flag " + region.getId() + " passthrough allow", TextColor.AQUA))
                             .append(TextComponent.of(")", TextColor.GRAY)));
         }
@@ -392,9 +392,9 @@ class RegionCommandsBase {
         ProtectedRegion spawn = WorldGuard.getInstance().getPlatform().getSpawnProtection(world);
         if (spawn != null) {
             if (!spawn.getIntersectingRegions(ImmutableList.of(region)).isEmpty()) {
-                sender.print(ErrorFormat.wrap("Warning!")
-                        .append(TextComponent.of(" This region overlaps vanilla's spawn protection. WorldGuard cannot " +
-                                "override this, and only server operators will be able to interact with this area.", TextColor.WHITE)));
+                sender.print(ErrorFormat.wrap("警告！")
+                        .append(TextComponent.of(" このリージョンはバニラのスポーン保護と重なっています。WorldGuardはこれを" +
+                                "上書きできないため、サーバーオペレーターのみがこのエリアで操作できます。", TextColor.WHITE)));
                 return true;
             }
         }
@@ -416,10 +416,10 @@ class RegionCommandsBase {
             selector.setWorld(world);
             session.setRegionSelector(world, selector);
             selector.explainRegionAdjust(actor, session);
-            actor.print("Region selected as " + region.getType().getName());
+            actor.print("リージョンを " + region.getType().getName() + " として選択しました");
         } else {
-            throw new CommandException("Can't select that region! " +
-                    "The region type '" + region.getType().getName() + "' can't be selected.");
+            throw new CommandException("そのリージョンは選択できません！" +
+                    "リージョンタイプ '" + region.getType().getName() + "' は選択できません。");
         }
     }
 

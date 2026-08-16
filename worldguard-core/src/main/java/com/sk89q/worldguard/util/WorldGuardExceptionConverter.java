@@ -48,10 +48,10 @@ public class WorldGuardExceptionConverter extends ExceptionConverterHelper {
         final Matcher matcher = numberFormat.matcher(e.getMessage());
 
         if (matcher.matches()) {
-            throw newCommandException("Number expected; string \"" + matcher.group(1)
-                    + "\" given.", e);
+            throw newCommandException("数値が必要です。文字列 \"" + matcher.group(1)
+                    + "\" が指定されました。", e);
         } else {
-            throw newCommandException("Number expected; string given.", e);
+            throw newCommandException("数値が必要です。文字列が指定されました。", e);
         }
     }
 
@@ -63,22 +63,22 @@ public class WorldGuardExceptionConverter extends ExceptionConverterHelper {
     @ExceptionMatch
     public void convert(StorageException e) throws CommandException {
         WorldGuard.logger.log(Level.WARNING, "Error loading/saving regions", e);
-        throw newCommandException("Region data could not be loaded/saved: " + e.getMessage(), e);
+        throw newCommandException("リージョンデータの読み込み/保存ができませんでした: " + e.getMessage(), e);
     }
 
     @ExceptionMatch
     public void convert(RejectedExecutionException e) throws CommandException {
-        throw newCommandException("There are currently too many tasks queued to add yours. Use /wg running to list queued and running tasks.", e);
+        throw newCommandException("現在キューに入っているタスクが多すぎるため、追加できません。/wg running でキュー中および実行中のタスクを確認してください。", e);
     }
 
     @ExceptionMatch
     public void convert(CancellationException e) throws CommandException {
-        throw newCommandException("Task was cancelled.", e);
+        throw newCommandException("タスクはキャンセルされました。", e);
     }
 
     @ExceptionMatch
     public void convert(InterruptedException e) throws CommandException {
-        throw newCommandException("Task was interrupted.", e);
+        throw newCommandException("タスクは中断されました。", e);
     }
 
     @ExceptionMatch
@@ -93,6 +93,6 @@ public class WorldGuardExceptionConverter extends ExceptionConverterHelper {
 
     @ExceptionMatch
     public void convert(AuthorizationException e) throws CommandException {
-        throw newCommandException("You don't have permission to do that.", e);
+        throw newCommandException("それを行う権限がありません。", e);
     }
 }

@@ -56,7 +56,7 @@ public class VectorFlag extends Flag<Vector3> {
                 }
             }
 
-            throw new InvalidFlagFormat("Expected 'here' or x,y,z.");
+            throw new InvalidFlagFormat("'here' または x,y,z を指定してください。");
         }
     }
 
