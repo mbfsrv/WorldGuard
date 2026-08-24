@@ -45,6 +45,7 @@ import com.sk89q.worldguard.bukkit.listener.BuildPermissionListener;
 import com.sk89q.worldguard.bukkit.listener.ChestProtectionListener;
 import com.sk89q.worldguard.bukkit.listener.DebuggingListener;
 import com.sk89q.worldguard.bukkit.listener.EventAbstractionListener;
+import com.sk89q.worldguard.bukkit.listener.FoliaEnderPearlListener;
 import com.sk89q.worldguard.bukkit.listener.InvincibilityListener;
 import com.sk89q.worldguard.bukkit.listener.PlayerModesListener;
 import com.sk89q.worldguard.bukkit.listener.PlayerMoveListener;
@@ -203,6 +204,11 @@ public class WorldGuardPlugin extends JavaPlugin {
         (new PlayerModesListener(this)).registerEvents();
         (new BuildPermissionListener(this)).registerEvents();
         (new InvincibilityListener(this)).registerEvents();
+        if (this.isFolia()) {
+            // Folia never fires PlayerTeleportEvent for ender pearls, so the enderpearl flag
+            // has to be enforced on the projectile instead.
+            (new FoliaEnderPearlListener(this)).registerEvents();
+        }
         if ("true".equalsIgnoreCase(System.getProperty("worldguard.debug.listener"))) {
             (new DebuggingListener(this, WorldGuard.logger)).registerEvents();
         }
