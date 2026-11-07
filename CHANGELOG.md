@@ -1,5 +1,30 @@
 # Changelog
 
+## 7.0.21
+
+* Improved protection checks for placing cushions.
+* Fixed straw beds not being treated as beds for certain flags.
+* Fixed cases where creepers could lose tracking of players who triggered them to explode.
+* Improved caching to ensure unloaded worlds are not kept around in memory longer than necessary.
+* Improved Folia detection to better detect Folia forks.
+* Fixed errors on Folia caused by complex cross-world block interactions.
+
+## 7.0.20
+
+* Require 26.3+.
+* Fixed poplar boats causing errors in some situations.
+* Support Paper's new EntityBreakEvent (used for cushion destruction) in protection.
+* Improved handling of buckets on waterlogged blocks when sneaking.
+* Fixed a Folia error caused by entity actions occurring across Folia region boundaries.
+* Improved command feedback when setting a state flag to "none".
+
+## 7.0.19
+
+* Require 26.2+.
+* Improved handling for TNT inside of sulfur cubes.
+* Improve performance of mob spawn prevention on Paper servers in some situations.
+* Improved handling of certain flags when `/wg flushstates` is run, or in certain login situations.
+
 ## 7.0.18
 
 * Add lava-harden flag for cobblestone/stone/obsidian/basalt forming.

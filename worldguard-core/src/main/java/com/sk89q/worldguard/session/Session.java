@@ -143,6 +143,9 @@ public class Session {
         for (Handler handler : handlers.values()) {
             handler.uninitialize(player, location, set);
         }
+
+        lastValid = null;
+        lastRegionSet = null;
     }
 
     /**
@@ -161,11 +164,12 @@ public class Session {
     }
 
     /**
-     * Re-initialize the session.
+     * Restore handler-managed state and then re-initialize the session.
      *
      * @param player The player
      */
     public void resetState(LocalPlayer player) {
+        uninitialize(player);
         initialize(player);
         needRefresh.set(true);
     }
@@ -223,6 +227,12 @@ public class Session {
      */
     @Nullable
     public Location testMoveTo(LocalPlayer player, Location to, MoveType moveType, boolean forced) {
+        if (lastValid == null) {
+            // If lastValid is null, the session has not yet been initialized. This shouldn't happen, but theoretically
+            // can due to Bukkit event orderings.
+            return null;
+        }
+
         RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
 
         if (!forced && needRefresh.getAndSet(false)) {

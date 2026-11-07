@@ -179,7 +179,8 @@ public final class Cause {
     @Nullable
     public Block getFirstBlock() {
         for (Object object : causes) {
-            if (object instanceof Block b) {
+            if (object instanceof Block b && (!WorldGuardPlugin.inst().isFolia()
+                    || Bukkit.isOwnedByCurrentRegion(b.getLocation()))) {
                 return b;
             }
         }
@@ -331,10 +332,16 @@ public final class Cause {
                     }
                 } else if (o instanceof Creeper c) {
                     indirect = true;
-                    addAll(c.getTarget(), c.getIgniter());
+                    if (!WorldGuardPlugin.inst().isFolia()
+                            || Bukkit.isOwnedByCurrentRegion(c)) {
+                        addAll(c.getTarget(), c.getIgniter());
+                    }
                 } else if (o instanceof Creature c) {
                     indirect = true;
-                    addAll(c.getTarget());
+                    if (!WorldGuardPlugin.inst().isFolia()
+                            || Bukkit.isOwnedByCurrentRegion(c)) {
+                        addAll(c.getTarget());
+                    }
                 } else if (o instanceof BlockProjectileSource) {
                     addAll(((BlockProjectileSource) o).getBlock());
                 } else if (o instanceof LightningStrike && PaperLib.isPaper() &&
