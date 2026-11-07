@@ -1,0 +1,44 @@
+name: Build WorldGuard Bukkit
+on:
+  push:
+    branches:
+      - 'master'
+      - 'version/*'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-bukkit:
+    name: Build WorldGuard Bukkit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: 25
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: ${{ !(github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/version/')) }}
+
+      - name: Build worldguard-bukkit
+        run: ./gradlew :worldguard-bukkit:build -s
+
+      - name: Upload plugin jar
+        uses: actions/upload-artifact@v6
+        with:
+          name: WorldGuard-Bukkit
+          path: worldguard-bukkit/build/libs/*-dist.jar
+          if-no-files-found: error
+
+      - name: Upload reports on failure
+        uses: actions/upload-artifact@v6
+        if: failure()
+        with:
+          name: build-reports
+          path: '**/build/reports/**'
